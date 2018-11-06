@@ -1,0 +1,123 @@
+﻿<div>
+    <div>
+        <h1>All Employees</h1>
+        <ul id="items" />
+    </div>
+    <div>
+        <label for="empid">Id:</label> <input type="text" id="empid" />
+        <input type="button" value="Get Employee Details" onclick="GetEmployeeDetails();" />
+        <input type="button" value="Delete" onclick="DeleteEmployee();" />
+        <input type="button" value="Edit" onclick="EditEmployee();" />
+        <p id="item" />
+    </div>
+    <h1>Add Employee</h1> <div>
+        <label for="name">Name:</label><input type="text" id="name" />
+        <label for="salary">Salary:</label> <input type="text" id="salary" />
+        <label for="isActive">IsActive:</label> <input type="checkbox" id="isActive" />
+        <input type="button" value="Add Employee" onclick="AddEmployee();" />
+        <input type="button" value="Update Employee" onclick="UpdateEmployee();" />
+    </div>
+    <h5 id="h3Info" class="text-info">Employee Details:</h5>
+    <span id="spnDetails" class="text-success"></span>
+</div>
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () { GetAllEmployees() });
+        function GetAllEmployees() {
+            $.getJSON("/api/EmployeeApi/", function (data) {
+                // On success, 'data' contains a list of Employees.
+                $('#items').text("");
+                $.each(data, function (key, emp) {
+                    // Format the text to display.
+                    var str = emp.pkEmpId + ", " + emp.empName + ", " + emp.salary + ", " + emp.isActive;
+                    // Add a list item.
+                    console.log(emp);
+                    $('<li/>', { text: str }).appendTo($('#items'));
+                });
+            });
+        }
+        function GetEmployeeDetails() {
+            var id = $('#empid').val();
+            $.getJSON("/api/EmployeeApi/" + id, function (emp) {
+                var str = emp.pkEmpId + ", " + emp.empName + ", " + emp.salary + ", " + emp.isActive;
+                $('#spnDetails').text(str);
+            })
+        }
+        function AddEmployee() {
+            var Active = false;
+            if ($('#isActive').is(":checked")) {
+                Active = true;
+            }
+            $.ajax({
+                type: "POST",
+                contentType: "application/json;charset=utf-8",
+                url: "/api/EmployeeApi",
+                data: JSON.stringify({
+                    pkEmpId: 0,
+                    empName: $("#name ").val(),
+                    salary: $("#salary").val(),
+                    isActive: Active,
+                    fkDeptId: 1
+                }),
+                dataType: "json",
+                success: function (data) {
+                    GetAllEmployees();
+                }
+            });
+        }
+        function EditEmployee() {
+            var id = $('#empid').val();
+            $.getJSON("/api/EmployeeApi/" + id, function (emp) {
+                var str = emp.pkEmpId + ", " + emp.empName + ", " + emp.salary + ", " + emp.isActive;
+                $('#name').val(emp.empName);
+                $('#salary').val(emp.salary);
+                if (emp.isActive) {
+                    $('#isActive').val($('#isActive').prop('checked', true));
+                }
+                else {
+                    $('#isActive').val($('#isActive').prop('checked', false));
+                }
+            })
+        }
+        function UpdateEmployee() {
+            var id = $('#empid').val();
+            var Active = false;
+            if ($('#isActive').is(":checked")) {
+                Active = true;
+            }
+            var empName = $("#name ").val();
+            var salary = $("#salary").val();
+            $.ajax("/api/EmployeeApi/" + id,
+                {
+                    type: "Put",
+                    data: JSON.stringify({
+                        'pkEmpId': id, 'empName': empName,
+                        'salary': salary,
+                        'isActive': Active,
+                        fkDeptId: 1
+                    }),
+                    dataType: "JSON",
+                    contentType: "application/json;charset=utf-8",
+                    success: function (data) {
+                        $("#items").html("");
+                        GetAllEmployees();
+                        alert("Updated");
+                    },
+                    fail: function (data) {
+                        alert("Failed to update.")
+                    }
+                });
+        }
+        function DeleteEmployee() {
+            var id = $('#empid').val();
+            $.ajax({
+                type: "DELETE",
+                contentType: "application/json;charset=utf-8",
+                url: "/api/EmployeeApi/" + id,
+                dataType: "json",
+                success: function (data) {
+                    GetAllEmployees();
+                }
+            });
+        }</script>
+}

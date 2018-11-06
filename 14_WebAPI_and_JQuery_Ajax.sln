@@ -5,6 +5,11 @@ VisualStudioVersion = 15.0.28010.2016
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "14_WebAPI_and_JQuery_Ajax", "10_CRUD_operations_using_Entity_Framwork\14_WebAPI_and_JQuery_Ajax.csproj", "{44DE1CDA-67B5-4A77-A9CA-3AA422A62771}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8F7D2597-5B1E-4664-AEBD-A765171B6161}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
